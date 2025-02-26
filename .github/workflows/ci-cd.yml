@@ -61,8 +61,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: "EncryptionAPI"
-          environment_name: "EncryptionAPI-env"
+          application_name: "EncryptionAPI" # Match your Elastic Beanstalk application name
+          environment_name: "EncryptionAPI-env" # Match your Elastic Beanstalk environment name
           version_label: "v1.0.0"
-          region: "us-east-1"
-          deployment_package: publish.zip # Use the zipped artifact
+          region: "us-east-1" # Match your AWS region
+          deployment_package: publish.zip
