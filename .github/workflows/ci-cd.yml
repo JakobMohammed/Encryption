@@ -20,7 +20,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x' # Use .NET 8.0.x to match your project
+          dotnet-version: '8.0.x'
 
       - name: Restore dependencies
         run: dotnet restore
@@ -30,6 +30,9 @@ jobs:
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
+
+      - name: Publish
+        run: dotnet publish -c Release -o ./publish
 
   deploy:
     needs: build
@@ -43,10 +46,15 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x' # Use .NET 8.0.x to match your project
+          dotnet-version: '8.0.x'
 
       - name: Publish
         run: dotnet publish -c Release -o ./publish
+
+      - name: Zip artifacts
+        run: |
+          cd ./publish
+          zip -r ../publish.zip .
 
       - name: Deploy to AWS Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -57,4 +65,4 @@ jobs:
           environment_name: "EncryptionAPI-env"
           version_label: "v1.0.0"
           region: "us-east-1"
-          deployment_package: ./publish
+          deployment_package: publish.zip # Use the zipped artifact
