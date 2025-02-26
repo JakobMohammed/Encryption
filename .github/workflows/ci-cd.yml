@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Trigger the workflow on push to main or develop branches, or on pull requests to main
 on:
   push:
     branches:
@@ -12,59 +11,50 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # Use the latest Ubuntu environment
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up .NET
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x' # Use .NET 6 (or the version you're using)
+          dotnet-version: '8.0.x' # Update this to match your project's target framework
 
-      # Step 3: Restore dependencies
       - name: Restore dependencies
         run: dotnet restore
 
-      # Step 4: Build the project
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      # Step 5: Run tests (if you have any)
       - name: Test
         run: dotnet test --no-restore --verbosity normal
 
   deploy:
-    needs: build # Ensure the build job runs first
+    needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # Only deploy on the main branch
+    if: github.ref == 'refs/heads/main'
 
     steps:
-      # Step 1: Check out the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up .NET
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '8.0.x' # Update this to match your project's target framework
 
-      # Step 3: Publish the project
       - name: Publish
         run: dotnet publish -c Release -o ./publish
 
-      # Step 4: Deploy to AWS Elastic Beanstalk
       - name: Deploy to AWS Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }} # AWS access key from GitHub secrets
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # AWS secret key from GitHub secrets
-          application_name: "EncryptionAPI" # Replace with your Elastic Beanstalk application name
-          environment_name: "EncryptionAPI-env" # Replace with your Elastic Beanstalk environment name
-          version_label: "v1.0.0" # Version label for the deployment
-          region: "us-east-1" # AWS region
-          deployment_package: ./publish # Path to the published files
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: "EncryptionAPI"
+          environment_name: "EncryptionAPI-env"
+          version_label: "v1.0.0"
+          region: "us-east-1"
+          deployment_package: ./publish
