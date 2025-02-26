@@ -63,4 +63,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: "EncryptionAPI"
           environment_name: "EncryptionAPI-env"
-          version_label: "v1.0.0-${{ github.sha }}" #
+          version_label: "v1.0.0-${{ github.sha }}" # Unique version label
+          region: "us-east-1" # Specify your AWS region here
+          deployment_package: publish.zip
